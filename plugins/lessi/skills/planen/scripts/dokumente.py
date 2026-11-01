@@ -36,11 +36,17 @@ def bauen(lauf):
     if stand["status"] != "freigegeben":
         vermerk += " Entwurf: Bitte vor dem Einsatz selbst durchsehen."
     folien = aktuelle(lauf)
+    if not folien:
+        raise ValueError("Erst die Folien in Canva bauen, prüfen und mit canva.py festhalten, oder dort festhalten, warum es keine gibt.")
+    if "ohne" in folien:
+        folien_text = "- Keine Folien: " + folien["ohne"]
+    else:
+        folien_text = "- Folien in Canva (%d Folien): %s" % (folien["seiten"], folien["bearbeitungslink"])
     fuss = word.absatz("", abstand=240) + word.absatz(vermerk, groesse=16, farbe="777777")
 
     plan = "".join([
         kopf("Unterrichtsplan", eingabe),
-        teil("Präsentation", "- Folien in Canva: " + folien) if folien else "",
+        teil("Präsentation", folien_text),
         teil("Rahmen", abschnitt(lauf, "01_auftrag.md", "Rahmen")),
         teil("Lerngruppe", abschnitt(lauf, "01_auftrag.md", "Lerngruppe")),
         teil("Lernziele", abschnitt(lauf, "04_unterrichtsplan.md", "Lernziele")),

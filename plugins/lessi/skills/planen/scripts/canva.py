@@ -1,4 +1,4 @@
-"""Hält die Canva-Präsentation zu einem geprüften Stand fest. Angaben kommen als JSON über stdin."""
+"""Hält die geprüften Canva-Folien zu einem Stand fest, oder warum es keine gibt. Angaben als JSON über stdin."""
 import argparse
 import json
 import re
@@ -12,12 +12,7 @@ DATEI = "09_praesentation.json"
 FERTIG = ("wartet_auf_lehrkraft", "freigegeben", "zurueckgestellt")
 
 
-def festhalten(lauf, angaben):
-    stand = status(lauf)
-    if stand["status"] not in FERTIG:
-        raise ValueError("Die Präsentation erst bauen, wenn alle Prüfungen bestanden sind.")
-    if not isinstance(angaben, dict):
-        raise ValueError("Ein JSON-Objekt wird erwartet.")
+def folien_pruefen(angaben):
     ident = angaben.get("design_id")
     if not isinstance(ident, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", ident):
         raise ValueError("Eine echte Canva-Design-ID fehlt.")
@@ -26,18 +21,43 @@ def festhalten(lauf, angaben):
         raise ValueError("Ein passender Canva-Bearbeitungslink fehlt.")
     seiten = angaben.get("seiten")
     if not isinstance(seiten, int) or isinstance(seiten, bool) or seiten < 1:
-        raise ValueError("Die Seitenzahl fehlt.")
-    eintrag = {"design_id": ident, "bearbeitungslink": angaben["bearbeitungslink"], "seiten": seiten, "version": stand["version"]}
+        raise ValueError("Die Folienzahl fehlt.")
+    pruefung = angaben.get("pruefung")
+    if not isinstance(pruefung, dict) or pruefung.get("urteil") != "freigegeben":
+        raise ValueError("Die Folien brauchen eine bestandene Prüfung. Mängel erst in Canva beheben.")
+    geprueft = pruefung.get("geprueft")
+    if not isinstance(geprueft, list) or not all(isinstance(g, str) and g.strip() for g in geprueft):
+        raise ValueError("Die Prüfung braucht unter geprueft konkrete Ergebnisse.")
+    # Jede Folie muss einzeln angesehen worden sein
+    if len(geprueft) < seiten:
+        raise ValueError("Für jede Folie wird ein eigenes Prüfergebnis gebraucht (%d von %d)." % (len(geprueft), seiten))
+    return {"design_id": ident, "bearbeitungslink": angaben["bearbeitungslink"], "seiten": seiten, "geprueft": geprueft}
+
+
+def festhalten(lauf, angaben):
+    stand = status(lauf)
+    if stand["status"] not in FERTIG:
+        raise ValueError("Die Folien erst bauen, wenn alle Prüfungen bestanden sind.")
+    if not isinstance(angaben, dict):
+        raise ValueError("Ein JSON-Objekt wird erwartet.")
+    if "ohne" in angaben:
+        grund = angaben["ohne"]
+        if not isinstance(grund, str) or len(grund.strip()) < 15:
+            raise ValueError("Bitte konkret angeben, warum es keine Folien gibt.")
+        eintrag = {"ohne": grund.strip()}
+    else:
+        eintrag = folien_pruefen(angaben)
+    eintrag["version"] = stand["version"]
     schreiben(lauf / DATEI, eintrag)
-    spur(lauf, "praesentation", True, ident)
+    spur(lauf, "praesentation", "ohne" not in eintrag, eintrag.get("ohne", eintrag.get("design_id")))
     return eintrag
 
 
 def aktuelle(lauf):
-    """Link der Präsentation, wenn sie zum aktuellen Stand gehört."""
+    """Eintrag zu den Folien, wenn er zum aktuellen Stand gehört."""
     eintrag = lesen(lauf / DATEI)
     if eintrag and eintrag.get("version") == status(lauf)["version"]:
-        return eintrag["bearbeitungslink"]
+        return eintrag
     return None
 
 

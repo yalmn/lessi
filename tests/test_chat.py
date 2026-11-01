@@ -24,6 +24,8 @@ INHALT = {
     'loesungsentwicklung': '## Loesungen\n### A1\nTengo dos hermanos.\n## Erwartungshorizont\nDrei korrekte Sätze\n',
 }
 REVIEW = {'urteil': 'freigegeben', 'geprueft': ['A1 und Beleg [1] geprüft'], 'befunde': []}
+FOLIEN = {'design_id': 'DAF1', 'bearbeitungslink': 'https://www.canva.com/design/DAF1/edit', 'seiten': 2,
+          'pruefung': {'urteil': 'freigegeben', 'geprueft': ['Folie 1: Titel lesbar', 'Folie 2: A1 wie auf dem Blatt']}}
 
 
 def word_text(pfad):
@@ -97,6 +99,7 @@ class ChatTest(unittest.TestCase):
     def test_ganzer_durchgang(self):
         self.bis_fertig()
         lauf = self.arbeit / self.lauf
+        self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps(FOLIEN))
         self.run_skript('dokumente.py', '--lauf', self.lauf)
         plan, blatt, loesung = (word_text(lauf / n) for n in ('Unterrichtsplan.docx', 'Arbeitsblatt.docx', 'Loesungen.docx'))
         self.assertIn('<w:tbl>', plan)
@@ -115,34 +118,53 @@ class ChatTest(unittest.TestCase):
         self.run_skript('dokumente.py', '--lauf', self.lauf)
         self.assertNotIn('Entwurf', word_text(lauf / 'Arbeitsblatt.docx'))
 
-    def test_canva_link_gehoert_zum_stand(self):
-        self.lauf = self.run_skript('neuer_lauf.py', eingabe='Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie').stdout.strip()
-        folien = json.dumps({'design_id': 'DAF1', 'bearbeitungslink': 'https://www.canva.com/design/DAF1/edit', 'seiten': 6})
-        self.assertEqual(self.run_skript('canva.py', '--lauf', self.lauf, eingabe=folien, ok=False).returncode, 2)
-
-        self.lauf = None
+    def test_dokumente_erst_nach_folien(self):
         self.bis_fertig()
-        for falsch in ({'design_id': 'DAF1', 'bearbeitungslink': 'https://canva.example.org/design/DAF1/edit', 'seiten': 6},
-                       {'design_id': 'DAF1', 'bearbeitungslink': 'https://www.canva.com/design/ANDERE/edit', 'seiten': 6},
-                       {'design_id': 'DAF1', 'bearbeitungslink': 'https://www.canva.com/design/DAF1/edit', 'seiten': 0}):
-            self.assertEqual(self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps(falsch), ok=False).returncode, 2)
-        self.run_skript('canva.py', '--lauf', self.lauf, eingabe=folien)
+        result = self.run_skript('dokumente.py', '--lauf', self.lauf, ok=False)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('Folien', result.stderr)
+        # Ein zu knapper Grund reicht nicht
+        self.assertEqual(self.run_skript('canva.py', '--lauf', self.lauf, eingabe='{"ohne": "geht nicht"}', ok=False).returncode, 2)
+        self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps({'ohne': 'Canva ist in diesem Chat nicht eingeschaltet.'}))
+        self.run_skript('dokumente.py', '--lauf', self.lauf)
+        self.assertIn('Keine Folien: Canva ist in diesem Chat nicht eingeschaltet.',
+                      word_text(self.arbeit / self.lauf / 'Unterrichtsplan.docx'))
+
+    def test_folien_brauchen_pruefung_je_folie(self):
+        self.lauf = self.run_skript('neuer_lauf.py', eingabe='Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie').stdout.strip()
+        self.assertEqual(self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps(FOLIEN), ok=False).returncode, 2)
+
+        self.bis_fertig()
+        falsch = [
+            dict(FOLIEN, bearbeitungslink='https://canva.example.org/design/DAF1/edit'),
+            dict(FOLIEN, bearbeitungslink='https://www.canva.com/design/ANDERE/edit'),
+            dict(FOLIEN, seiten=0),
+            {k: v for k, v in FOLIEN.items() if k != 'pruefung'},
+            dict(FOLIEN, pruefung={'urteil': 'aenderungen', 'geprueft': ['Folie 1: zu viel Text', 'Folie 2: ok']}),
+            dict(FOLIEN, seiten=3),
+        ]
+        for angaben in falsch:
+            result = self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps(angaben), ok=False)
+            self.assertEqual(result.returncode, 2, angaben)
+        self.assertIn('jede Folie', result.stderr)
+        self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps(FOLIEN))
         self.run_skript('dokumente.py', '--lauf', self.lauf)
         self.assertIn('https://www.canva.com/design/DAF1/edit', word_text(self.arbeit / self.lauf / 'Unterrichtsplan.docx'))
 
-        # Ein Änderungswunsch macht den alten Folienlink ungültig
+    def test_aenderungswunsch_macht_folien_ungueltig(self):
+        self.bis_fertig()
+        self.run_skript('canva.py', '--lauf', self.lauf, eingabe=json.dumps(FOLIEN))
         befunde = [{'agent': 'unterrichtsplanung', 'auftrag': 'Einstieg auf 5 Minuten kürzen'}]
         self.run_skript('workflow.py', 'lehrkraft', '--lauf', self.lauf, eingabe=json.dumps(
             {'entscheidung': 'aenderungen', 'version': self.status()['version'], 'nachricht': 'Einstieg kürzer bitte', 'befunde': befunde}))
         self.assertEqual(self.status()['agent'], 'unterrichtsplanung')
-        INHALT_ALT = INHALT['unterrichtsplanung']
-        INHALT['unterrichtsplanung'] = INHALT_ALT.replace('| 10 | Einstieg |\n| 35 | A1 |', '| 5 | Einstieg |\n| 40 | A1 |')
-        self.addCleanup(INHALT.__setitem__, 'unterrichtsplanung', INHALT_ALT)
+        alt = INHALT['unterrichtsplanung']
+        INHALT['unterrichtsplanung'] = alt.replace('| 10 | Einstieg |\n| 35 | A1 |', '| 5 | Einstieg |\n| 40 | A1 |')
+        self.addCleanup(INHALT.__setitem__, 'unterrichtsplanung', alt)
         while self.status()['agent']:
             self.schritt(self.status()['agent'])
-        self.run_skript('dokumente.py', '--lauf', self.lauf)
-        self.assertNotIn('canva.com', word_text(self.arbeit / self.lauf / 'Unterrichtsplan.docx'))
-
+        # Die alten Folien gehören nicht mehr zum Stand
+        self.assertEqual(self.run_skript('dokumente.py', '--lauf', self.lauf, ok=False).returncode, 2)
 
 if __name__ == '__main__':
     unittest.main()
