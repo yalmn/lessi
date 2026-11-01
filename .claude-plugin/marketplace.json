@@ -1,0 +1,14 @@
+{
+  "name": "lessi",
+  "description": "Unterrichtsplanung für Lehrkräfte",
+  "owner": {
+    "name": "H. Yalman"
+  },
+  "plugins": [
+    {
+      "name": "lessi-test",
+      "source": "./plugins/lessi-test",
+      "description": "Probelauf: prüft, ob Lessi in der Claude-App läuft"
+    }
+  ]
+}
