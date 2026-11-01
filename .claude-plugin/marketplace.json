@@ -6,6 +6,11 @@
   },
   "plugins": [
     {
+      "name": "lessi",
+      "source": "./plugins/lessi",
+      "description": "Unterricht planen, in Canva gestalten und gemeinsam mit der Lehrkraft freigeben."
+    },
+    {
       "name": "lessi-test",
       "source": "./plugins/lessi-test",
       "description": "Probelauf: prüft, ob Lessi in der Claude-App läuft"

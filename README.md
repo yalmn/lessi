@@ -1,39 +1,32 @@
 # Lessi
 
-Unterricht planen in wenigen Minuten. Du gibst Schulform, Bundesland, Klasse, Fach und Thema an, Lessi recherchiert, prüft und legt alles im Ordner `ergebnisse` ab.
+Unterricht planen, Materialien in Canva gestalten und vor dem Einsatz prüfen.
+Die letzte Freigabe gibst du selbst.
 
-## Das brauchst du
+## Einmal einrichten
 
-- ein bezahltes Claude-Abo (Pro oder Max)
-- ein GitHub-Konto (kostenlos)
+In Claude Code den Marktplatz hinzufügen und Lessi installieren:
 
-## Einrichten auf dem iPad
-
-1. Claude-App aus dem App Store laden und anmelden.
-2. Auf github.com dieses Repo öffnen und oben auf **Fork** tippen.
-3. In der Claude-App den Reiter **Code** öffnen und GitHub verbinden.
-4. Deinen Fork auswählen und eine neue Sitzung starten.
-
-## Einrichten auf dem Rechner
-
-1. Claude Code installieren: https://code.claude.com/docs/en/quickstart
-2. Repo klonen: `git clone <Adresse deines Forks>`
-3. In den Ordner wechseln, `claude` starten und den Ordner als vertrauenswürdig bestätigen.
-
-## Benutzen
-
-In der Sitzung eintippen:
-
-```
-/lessi Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie
+```text
+/plugin marketplace add yalmn/lessi
+/plugin install lessi@lessi
 ```
 
-Bitte keine Namen oder Daten von Schülern eingeben. Dein Fork ist öffentlich, alles in `ergebnisse` kann jeder sehen.
+Ein GitHub-Konto oder Fork ist nicht nötig. Du brauchst Claude Pro, eine
+Code-Sitzung mit Python 3.9 oder neuer und eine dort verbundene
+[Canva-Anbindung](docs/canva.md). Öffne einen eigenen Ordner für deine Materialien.
 
-Auf dem iPad bekommst du am Ende einen Link. Dort steht alles auf einer Seite.
+## Unterricht planen
 
-Auf dem Rechner liegt alles in `ergebnisse/<Datum>_<Thema>/`. Öffne dort `ergebnis.html`.
+```text
+/lessi:planen Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie, 45 Minuten
+```
 
-## Aktualisieren
+Lessi erstellt Unterrichtsplan, Präsentation, Arbeitsblatt und separate Lösungen.
+Nach den Reviews kannst du freigeben, Änderungen nennen oder zurückstellen.
+Ergebnisse bleiben in deinem Arbeitsordner unter `ergebnisse/<Lauf>/`.
+Mit `/lessi:review ergebnisse/<Lauf>` setzt du einen Durchgang fort.
 
-Auf github.com im Fork auf **Sync fork** tippen.
+Keine persönlichen Schülerdaten eingeben. Dateien werden nicht automatisch veröffentlicht.
+
+[Ablauf und Einrichtung](docs/ablauf.md) · [Updates](docs/installation.md)
