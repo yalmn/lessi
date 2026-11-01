@@ -1,7 +1,6 @@
 {
   "name": "lessi",
-  "version": "0.2.0",
-  "description": "Unterricht planen, in Canva gestalten und gemeinsam mit der Lehrkraft freigeben.",
+  "description": "Unterricht planen: Plan, Arbeitsblatt und Lösungen als Word-Dateien, vorher geprüft.",
   "author": {
     "name": "H. Yalman"
   },

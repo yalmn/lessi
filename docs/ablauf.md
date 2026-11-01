@@ -67,7 +67,7 @@ anderer Sitzungen. Derselbe Lauf darf nicht gleichzeitig in mehreren Sitzungen
 bearbeitet werden.
 
 ```text
-/lessi:review ergebnisse/<Lauf>
+/lessi-code:review ergebnisse/<Lauf>
 ```
 
 Der Koordinator prüft jeden Arbeitsschritt mit den Python-Skripten im installierten

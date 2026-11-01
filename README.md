@@ -1,32 +1,38 @@
 # Lessi
 
-Unterricht planen, Materialien in Canva gestalten und vor dem Einsatz prüfen.
-Die letzte Freigabe gibst du selbst.
+Unterricht planen in wenigen Minuten. Du bekommst Unterrichtsplan, Arbeitsblatt und Lösungen als Word-Dateien und die Folien in Canva. Alles wird vorher geprüft, die letzte Freigabe gibst du selbst.
 
-## Einmal einrichten
+## Das brauchst du
 
-In Claude Code den Marktplatz hinzufügen und Lessi installieren:
+- ein Claude-Abo (Pro oder höher)
+- Canva in Claude verbunden, wenn du Folien möchtest
 
-```text
-/plugin marketplace add yalmn/lessi
-/plugin install lessi@lessi
+## Einrichten auf dem iPad
+
+1. In Safari claude.ai öffnen und anmelden.
+2. Unter **Einstellungen > Funktionen** "Code ausführen und Dateien erstellen" einschalten.
+3. Unter **Anpassen > Plugins** auf **Hinzufügen** und dann **Marktplatz hinzufügen** tippen, `yalmn/lessi` eingeben.
+4. Bei **lessi** auf **Hinzufügen** tippen und beim Marktplatz die automatische Synchronisierung einschalten.
+
+Danach geht alles auch in der Claude-App.
+
+## Einrichten auf dem Rechner
+
+1. claude.ai im Browser oder die Claude-App öffnen und anmelden.
+2. Unter **Einstellungen > Funktionen** "Code ausführen und Dateien erstellen" einschalten.
+3. Unter **Anpassen > Plugins** auf **Hinzufügen** und dann **Marktplatz hinzufügen** klicken, `yalmn/lessi` eingeben.
+4. Bei **lessi** auf **Hinzufügen** klicken und beim Marktplatz die automatische Synchronisierung einschalten.
+
+## Benutzen
+
+In einem neuen Chat schreiben:
+
+```
+Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie, 45 Minuten
 ```
 
-Ein GitHub-Konto oder Fork ist nicht nötig. Du brauchst Claude Pro, eine
-Code-Sitzung mit Python 3.9 oder neuer und eine dort verbundene
-[Canva-Anbindung](docs/canva.md). Öffne einen eigenen Ordner für deine Materialien.
+Nach einigen Minuten bekommst du die Dateien zum Herunterladen und den Link zu den Folien. Sag danach, ob es passt oder was geändert werden soll.
 
-## Unterricht planen
+Bitte keine Namen oder Daten von Schülerinnen und Schülern eingeben.
 
-```text
-/lessi:planen Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie, 45 Minuten
-```
-
-Lessi erstellt Unterrichtsplan, Präsentation, Arbeitsblatt und separate Lösungen.
-Nach den Reviews kannst du freigeben, Änderungen nennen oder zurückstellen.
-Ergebnisse bleiben in deinem Arbeitsordner unter `ergebnisse/<Lauf>/`.
-Mit `/lessi:review ergebnisse/<Lauf>` setzt du einen Durchgang fort.
-
-Keine persönlichen Schülerdaten eingeben. Dateien werden nicht automatisch veröffentlicht.
-
-[Ablauf und Einrichtung](docs/ablauf.md) · [Updates](docs/installation.md)
+Für Claude Code gibt es eine Fassung mit getrennten Agenten: [docs/installation.md](docs/installation.md)

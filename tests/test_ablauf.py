@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'plugins' / 'lessi' / 'scripts'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'plugins' / 'lessi-code' / 'scripts'))
 from ablauf import SCHRITTE, ZIELE, CANVA, lehrkraft, pruefen, schreiben, status
 from abgeben import abgeben
 from bericht import bauen
@@ -204,7 +204,7 @@ class AblaufTest(unittest.TestCase):
         self.assertIn('noch nicht freigegeben', html)
 
     def test_neue_laeufe_sind_eindeutig_und_unabhaengig(self):
-        script = Path(__file__).resolve().parents[1] / 'plugins' / 'lessi' / 'scripts' / 'neuer_lauf.py'
+        script = Path(__file__).resolve().parents[1] / 'plugins' / 'lessi-code' / 'scripts' / 'neuer_lauf.py'
         env = dict(os.environ, CLAUDE_PROJECT_DIR=str(self.root), LESSI_WORKSPACE=str(self.root))
         result = [subprocess.check_output([sys.executable, str(script)], input=b'Thema: Familie', env=env, text=False).decode().strip() for _ in range(2)]
         self.assertNotEqual(*result)
@@ -218,7 +218,7 @@ class AblaufTest(unittest.TestCase):
             git.assert_not_called()
 
     def test_cli_laufpfad_und_fehlerausgabe(self):
-        script = Path(__file__).resolve().parents[1] / 'plugins' / 'lessi' / 'scripts' / 'workflow.py'
+        script = Path(__file__).resolve().parents[1] / 'plugins' / 'lessi-code' / 'scripts' / 'workflow.py'
         env = dict(os.environ, CLAUDE_PROJECT_DIR=str(self.root), LESSI_WORKSPACE=str(self.root))
         result = subprocess.run([sys.executable, str(script), 'status', '--lauf', 'ergebnisse/testlauf'], env=env, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0)

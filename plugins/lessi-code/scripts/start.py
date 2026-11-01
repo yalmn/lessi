@@ -8,4 +8,4 @@ try:
     (projekt() / "ergebnisse").mkdir(exist_ok=True)
 except (OSError, ValueError) as e:
     sys.exit(str(e))
-print("Lessi ist bereit. Start mit /lessi:planen; Fortsetzen mit /lessi:review.")
+print("Lessi ist bereit. Start mit /lessi-code:planen; Fortsetzen mit /lessi-code:review.")

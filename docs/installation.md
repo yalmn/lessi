@@ -1,4 +1,6 @@
-# Lessi installieren
+# Lessi in Claude Code
+
+Für Lehrkräfte reicht das Plugin `lessi` im normalen Chat, siehe README. Diese Seite beschreibt `lessi-code` mit getrennten Agenten für Claude Code.
 
 Ein GitHub-Konto, eigener Fork oder manuelles Klonen ist für Lehrkräfte nicht nötig.
 Das öffentliche Repository liefert nur das Plugin an Claude Code aus. Die Anmeldung
@@ -9,7 +11,7 @@ In einer Claude-Code-Sitzung:
 
 ```text
 /plugin marketplace add yalmn/lessi
-/plugin install lessi@lessi
+/plugin install lessi-code@lessi
 ```
 
 Alternativ im Plugin-Menü den Marktplatz `yalmn/lessi` hinzufügen, `lessi` auswählen
@@ -29,8 +31,8 @@ Plugin-Dateien. Updates überschreiben dadurch keine Unterrichtsmaterialien.
 # Benutzen
 
 ```text
-/lessi:planen Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie, 45 Minuten
-/lessi:review ergebnisse/<Lauf>
+/lessi-code:planen Gymnasium, NRW, Klasse 7, Spanisch, Thema: Familie, 45 Minuten
+/lessi-code:review ergebnisse/<Lauf>
 ```
 
 Der erste Befehl startet eine neue Planung. Der zweite setzt einen vorhandenen
@@ -59,12 +61,11 @@ Code-Web-Zugang auf dem iPad nachgewiesen.
 Zum lokalen Testen, ohne das Paket zu veröffentlichen:
 
 ```sh
-claude --plugin-dir ./plugins/lessi
-claude plugin validate ./plugins/lessi
+claude --plugin-dir ./plugins/lessi-code
+claude plugin validate ./plugins/lessi-code
 claude plugin validate .
 python3 -m unittest discover -s tests
 ```
 
-Der Marktplatz enthält zusätzlich `lessi-test` als separaten Verbindungstest. Für
-den vollständigen Ablauf muss das Plugin `lessi` installiert sein. Die Namen
-`/lessi:planen` und `/lessi:review` entstehen aus Pluginname und Skillname.
+Für den Ablauf mit Agenten muss das Plugin `lessi-code` installiert sein. Die Namen
+`/lessi-code:planen` und `/lessi-code:review` entstehen aus Pluginname und Skillname.

@@ -1,0 +1,10 @@
+{
+  "name": "lessi-code",
+  "version": "0.2.0",
+  "description": "Unterricht planen, in Canva gestalten und gemeinsam mit der Lehrkraft freigeben.",
+  "author": {
+    "name": "H. Yalman"
+  },
+  "repository": "https://github.com/yalmn/lessi",
+  "homepage": "https://github.com/yalmn/lessi"
+}

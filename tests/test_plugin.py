@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 REPO = Path(__file__).resolve().parents[1]
-PLUGIN = REPO / 'plugins' / 'lessi'
+PLUGIN = REPO / 'plugins' / 'lessi-code'
 sys.path.insert(0, str(PLUGIN / 'scripts'))
 from ablauf import SCHRITTE
 
@@ -17,7 +17,7 @@ from ablauf import SCHRITTE
 class PluginTest(unittest.TestCase):
     def test_marktplatz_liefert_vollstaendiges_plugin(self):
         markt = json.loads((REPO / '.claude-plugin/marketplace.json').read_text())
-        eintrag = next(p for p in markt['plugins'] if p['name'] == 'lessi')
+        eintrag = next(p for p in markt['plugins'] if p['name'] == 'lessi-code')
         quelle = (REPO / eintrag['source']).resolve()
         self.assertEqual(quelle, PLUGIN)
         manifest = json.loads((quelle / '.claude-plugin/plugin.json').read_text())

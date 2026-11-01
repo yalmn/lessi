@@ -19,7 +19,7 @@ Verbindliche Grenzen:
 Ausgabe als JSON, ohne Markdown-Umrandung. Alle IDs, Links und Seitenzahlen müssen aus dem tatsächlich erstellten Design stammen:
 
 ```json
-{"design_id":"ECHTE_ID","bearbeitungslink":"https://www.canva.com/design/ECHTE_ID/edit","seiten":8,"exporte":["praesentation.pdf"]}
+{"design_id":"ECHTE_ID","bearbeitungslink":"https://www.canva.com/design/ECHTE_ID/edit","seiten":2,"exporte":["arbeitsblatt.pdf"],"loesungen":{"design_id":"ANDERE_ID","bearbeitungslink":"https://www.canva.com/design/ANDERE_ID/edit","seiten":1,"exporte":["loesungen.pdf"]}}
 ```
 
 Exportpfade sind relativ zum Laufordner. Ein PDF aller Seiten ist Pflicht.

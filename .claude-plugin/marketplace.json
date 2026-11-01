@@ -8,12 +8,12 @@
     {
       "name": "lessi",
       "source": "./plugins/lessi",
-      "description": "Unterricht planen, in Canva gestalten und gemeinsam mit der Lehrkraft freigeben."
+      "description": "Unterricht planen: Plan, Arbeitsblatt und Lösungen als Word-Dateien, Folien in Canva, vorher geprüft."
     },
     {
-      "name": "lessi-test",
-      "source": "./plugins/lessi-test",
-      "description": "Probelauf: prüft, ob Lessi in der Claude-App läuft"
+      "name": "lessi-code",
+      "source": "./plugins/lessi-code",
+      "description": "Für Claude Code: Unterricht mit getrennten Agenten planen und in Canva gestalten."
     }
   ]
 }

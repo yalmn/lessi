@@ -28,7 +28,7 @@ def bauen(lauf):
                 url = design.get("bearbeitungslink", "")
                 if urlparse(url).scheme == "https" and urlparse(url).hostname in ("canva.com", "www.canva.com"):
                     materialien.append((agent, url))
-            materialien.extend((p.name, quote(p.relative_to(lauf).as_posix(), safe="/")) for p in exporte)
+            materialien.extend((p.name, quote(p.relative_to(lauf.resolve()).as_posix(), safe="/")) for p in exporte)
         except (OSError, ValueError, TypeError, AttributeError):
             continue
     teile = ["# Unterrichtspaket", "**" + titel + "**", "Version: " + stand["version"]]

@@ -4,27 +4,7 @@ import json
 import re
 from urllib.parse import urlparse
 
-# Die Reihenfolge ist zugleich die Abhängigkeit: Änderungen machen Folgeschritte ungültig.
-SCHRITTE = {
-    "auftragsklaerung": ("01_auftrag.md", ["Rahmen", "Lerngruppe", "Materialien", "Annahmen"]),
-    "lehrplanrecherche": ("02_lehrplan.md", ["Kompetenzen", "Fundstellen", "Offene Punkte"]),
-    "fachrecherche": ("03_fachrecherche.md", ["Kernpunkte", "Belege", "Unsicher"]),
-    "unterrichtsplanung": ("04_unterrichtsplan.md", ["Lernziele", "Stundenverlauf", "Lernkontrolle"]),
-    "aufgabenentwicklung": ("05_aufgaben.md", ["Aufgaben", "Differenzierung", "Materialbedarf"]),
-    "loesungsentwicklung": ("06_loesungen.md", ["Loesungen", "Erwartungshorizont"]),
-    "fachreview": ("07_fachreview.json", []),
-    "didaktikreview": ("08_didaktikreview.json", []),
-    "canva-praesentation": ("09_praesentation.json", []),
-    "canva-arbeitsblatt": ("10_arbeitsblatt.json", []),
-    "materialreview": ("11_materialreview.json", []),
-    "uebergabe": ("99_uebergabe.md", ["Materialien", "Pruefergebnisse", "Offene Punkte", "Freigabe"]),
-}
-ZIELE = {
-    "fachreview": ["lehrplanrecherche", "fachrecherche", "unterrichtsplanung", "aufgabenentwicklung", "loesungsentwicklung"],
-    "didaktikreview": ["auftragsklaerung", "unterrichtsplanung", "aufgabenentwicklung", "loesungsentwicklung"],
-    "materialreview": ["canva-praesentation", "canva-arbeitsblatt"],
-}
-CANVA = ("canva-praesentation", "canva-arbeitsblatt")
+from schritte import CANVA, QUELLEN, SCHRITTE, ZIELE
 
 
 def lesen(pfad, standard=None):
@@ -79,7 +59,8 @@ def signatur(lauf, agent, vorher):
     for datei in dateien(lauf, agent):
         if datei.is_symlink():
             raise ValueError("Ergebnisdateien dürfen keine Verknüpfungen sein.")
-        h.update(datei.relative_to(lauf).as_posix().encode())
+        # Beide Seiten auflösen, sonst scheitert der Vergleich etwa an /var und /private/var auf macOS
+        h.update(datei.resolve().relative_to(lauf.resolve()).as_posix().encode())
         h.update(datei.read_bytes())
     return h.hexdigest()
 
@@ -137,7 +118,7 @@ def pruefen(lauf, agent):
             treffer = re.search(r"^## " + re.escape(titel) + r"\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
             if not treffer or not treffer.group(1).strip():
                 raise ValueError("Abschnitt fehlt oder ist leer: " + titel)
-        if agent in ("lehrplanrecherche", "fachrecherche") and not re.search(r"https?://\S+", text):
+        if agent in QUELLEN and not re.search(r"https?://\S+", text):
             raise ValueError("Quellenlinks fehlen.")
     else:
         inhalt = json.loads(text)
